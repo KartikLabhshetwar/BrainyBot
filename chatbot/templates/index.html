@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chatbot using BrainShop API</title>
+    <style>
+    body {
+            font-family: "Roboto", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            background-color: #222831;
+            padding: 20px;
+    }
+
+    h1{
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        color:#EEEEEE;
+    }
+
+      #chat-container {
+         max-width: 600px;
+         margin: 20px auto;
+         padding: 20px;
+         border-radius: 5px;
+         background-color: #393E46;
+         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+         overflow-y: auto;
+         max-height: 400px;
+         color:#EEEEEE;
+      }
+
+        #chat-container p {
+            margin: 10px 0;
+        }
+
+        #chat-form {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #user-input {
+            flex-grow: 0.48;
+            padding: 10px;
+            padding-left: 10px;
+            margin-left: 105px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+        }
+
+
+    .button-6 {
+      align-items: center;
+      background-color: #00ADB5;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: .25rem;
+      box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+      box-sizing: border-box;
+      color: rgba(0, 0, 0, 0.85);
+      cursor: pointer;
+      display: inline-flex;
+      font-family: system-ui,-apple-system,system-ui,"Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-size: 16px;
+      color: #EEEEEE;
+      font-weight: 600;
+      justify-content: center;
+      line-height: 1.25;
+      margin: 20px;
+      min-height: 3rem;
+      padding: calc(.875rem - 1px) calc(1.5rem - 1px);
+      position: relative;
+      text-decoration: none;
+      transition: all 250ms;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      vertical-align: baseline;
+      width: 90px;
+    }
+
+    .button-6:hover,
+    .button-6:focus {
+      border-color: rgba(0, 0, 0, 0.15);
+      box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
+      color: rgba(0, 0, 0, 0.65);
+    }
+
+    .button-6:hover {
+      transform: translateY(-1px);
+    }
+
+    .button-6:active {
+      background-color: #F0F0F1;
+      border-color: rgba(0, 0, 0, 0.15);
+      box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px;
+      color: rgba(0, 0, 0, 0.65);
+      transform: translateY(0);
+    }
+    </style>
+</head>
+<body>
+    <h1>BrainyBot</h1>
+    
+    <div id="chat-container">
+      {% if user_input %}
+         <p>You: {{ user_input }}</p>
+         <p>Bot: {{ bot_response }}</p>
+      {% endif %}
+      </div>
+
+<form id="chat-form">
+    <input type="text" id="user-input" placeholder="Type your message here...">
+    <button class="button-6" role="button" type="submit" value="Send">Submit</button>
+</form>
+<script>
+    function sendMessage() {
+        var message = document.getElementById('user-input').value;
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/get_bot_response', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                var botResponse = document.createElement('p');
+                botResponse.textContent = 'Bot: ' + response.bot_response;
+                document.getElementById('chat-container').appendChild(botResponse);
+                document.getElementById('user-input').value = '';
+            }
+        };
+        xhr.send('message=' + message);
+    }
+
+    document.getElementById('chat-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var userInput = document.createElement('p');
+        userInput.textContent = 'You: ' + document.getElementById('user-input').value;
+        document.getElementById('chat-container').appendChild(userInput);
+        sendMessage();
+    });
+</script>
+</body>
+</html>
